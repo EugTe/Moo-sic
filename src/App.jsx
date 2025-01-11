@@ -15,7 +15,7 @@ function App() {
         alert('Please enter your username to delete your track.');
         return;
       }
-
+  
       try {
         if (window.confirm('Are you sure you want to delete your track for today?')) {
           const response = await deleteTrack(userId);
@@ -27,26 +27,27 @@ function App() {
       }
       return;
     }
-
+  
     const trackId = extractTrackId(spotifyLink);
     if (!trackId) {
       alert('Invalid Spotify link');
       return;
     }
-
+  
     try {
       const trackData = await fetchTrackDetails(trackId);
       setTrackDetails(trackData);
-
+  
       // Save track details
       const saveResponse = await saveTrack(trackData, userId, trackId, false);
       if (saveResponse.existingTrack) {
         const userChoice = window.confirm(
           'You already have a track saved for today. Do you want to replace it?'
         );
-
+  
+        
         if (userChoice) {
-          const replaceResponse = await saveTrack(trackData, userId, trackId, true);
+          const replaceResponse = await saveTrack(trackData, userId, trackId, true); // Pass 'true' here
           alert(replaceResponse.message);
         } else {
           alert('Track not replaced.');
