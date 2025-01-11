@@ -1,0 +1,31 @@
+.track-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* Increased gap for better spacing */
+  justify-content: center; /* Center-align the images */
+  padding: 20px; /* Add padding around the grid for spacing */
+}
+
+.track-item {
+  width: 120px; /* Slightly larger size for better visibility */
+  height: 120px;
+  position: relative;
+  overflow: hidden; /* Ensure no content spills outside */
+  border-radius: 8px; /* Rounded corners for a modern look */
+}
+
+.track-image {
+  width: 100%; /* Make the image fit the container */
+  height: 100%; /* Maintain aspect ratio */
+  object-fit: cover; /* Ensure images fit without distortion */
+  border-radius: 8px; /* Match border radius of .track-item */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.track-image:hover {
+  transform: scale(1.15); /* Slightly enlarge on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhance shadow on hover */
+  cursor: pointer;
+}
+
