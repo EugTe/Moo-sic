@@ -8,6 +8,7 @@ const trackSchema = new mongoose.Schema({
   albumCover: { type: String, required: true },
   date: { type: Date, default: Date.now },
   userId: { type: String, required: true },
+  displayName: { type: String, required: true },
 });
 
 trackSchema.index({ userId: 1, trackName: 1 }, { unique: true });
