@@ -1,4 +1,7 @@
 // header.jsx
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 export default function Header({ user, onLogout }) {
   return (
     <header className="bg-spotify-black/80 backdrop-blur-md text-white py-4 sticky top-0 z-10">
@@ -26,7 +29,7 @@ export default function Header({ user, onLogout }) {
             ) : (
               <button
                 onClick={() =>
-                  (window.location.href = "http://localhost:5000/auth/login")
+                  (window.location.href = '${API_URL}/auth/login')
                 }
                 className="bg-spotify-green hover:bg-spotify-green/80 text-white px-4 py-2 rounded"
               >
