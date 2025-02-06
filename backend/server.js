@@ -20,7 +20,7 @@ if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
 }
 
 // Middleware
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
@@ -32,6 +32,7 @@ app.use('/auth', authRoutes);
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
+    const serverUrl = process.env.FRONTEND_URL || `http://localhost:${port}`;
+    app.listen(port, () => console.log(`Server running on ${serverUrl}`));
   })
   .catch(error => console.error('MongoDB connection error:', error));
