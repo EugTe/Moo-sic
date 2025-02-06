@@ -3,6 +3,7 @@ import "./index.css";
 import { useState, useEffect, useCallback } from "react";
 import Header from "./Header";
 
+
 // Use Vite environment variable or fallback to localhost.
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
