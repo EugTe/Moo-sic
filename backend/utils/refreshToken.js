@@ -1,17 +1,21 @@
-const axios = require('axios');
-const User = require('../models/User');
+import axios from 'axios';
+import User from '../models/User.js';
 
 async function refreshAccessToken(user) {
   try {
-    const response = await axios.post('https://accounts.spotify.com/api/token', null, {
-      params: {
-        grant_type: 'refresh_token',
-        refresh_token: user.refreshToken,
-        client_id: process.env.SPOTIFY_CLIENT_ID,
-        client_secret: process.env.SPOTIFY_CLIENT_SECRET,
-      },
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
+    const response = await axios.post(
+      'https://accounts.spotify.com/api/token',
+      null,
+      {
+        params: {
+          grant_type: 'refresh_token',
+          refresh_token: user.refreshToken,
+          client_id: process.env.SPOTIFY_CLIENT_ID,
+          client_secret: process.env.SPOTIFY_CLIENT_SECRET,
+        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      }
+    );
 
     if (response.data.access_token) {
       user.accessToken = response.data.access_token;
@@ -25,4 +29,4 @@ async function refreshAccessToken(user) {
   return null;
 }
 
-module.exports = refreshAccessToken;
+export default refreshAccessToken;

@@ -1,14 +1,12 @@
-// server.js - Main entry point for the backend
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 
-// Import routes
-const spotifyRouter = require('./routes/spotify');
-const authRoutes = require('./routes/authRoutes');
+
+import spotifyRouter from '../backend/routes/spotify.js';
+import authRoutes from '../backend/routes/authRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;

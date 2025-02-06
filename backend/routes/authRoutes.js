@@ -1,14 +1,15 @@
+import express from 'express';
+import axios from 'axios';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
 
-const express = require('express');
-const axios = require('axios');
-const User = require('../models/User'); 
-const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
-require('dotenv').config();
+dotenv.config();
+
+import User from '../models/User.js';
 
 const router = express.Router();
 router.use(cookieParser()); // Parse cookies
-
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
@@ -23,8 +24,10 @@ router.get('/login', (req, res) => {
     return res.status(500).json({ error: 'Missing Spotify environment variables' });
   }
 
-  const authUrl = `${SPOTIFY_AUTH_URL}?client_id=${process.env.SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.SPOTIFY_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}`;
-  
+  const authUrl = `${SPOTIFY_AUTH_URL}?client_id=${process.env.SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
+    process.env.SPOTIFY_REDIRECT_URI
+  )}&scope=${encodeURIComponent(scope)}`;
+
   res.redirect(authUrl);
 });
 
@@ -35,7 +38,11 @@ router.get('/callback', async (req, res) => {
   if (!code) return res.status(400).json({ error: 'Authorization code not provided' });
 
   try {
-    if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET || !process.env.SPOTIFY_REDIRECT_URI) {
+    if (
+      !process.env.SPOTIFY_CLIENT_ID ||
+      !process.env.SPOTIFY_CLIENT_SECRET ||
+      !process.env.SPOTIFY_REDIRECT_URI
+    ) {
       throw new Error('Missing Spotify OAuth environment variables');
     }
 
@@ -82,7 +89,7 @@ router.get('/callback', async (req, res) => {
         email: email,
         profileImage: images.length ? images[0].url : '',
         accessToken: access_token,
-        refreshToken: refresh_token
+        refreshToken: refresh_token,
       });
     }
 
@@ -106,7 +113,6 @@ router.get('/callback', async (req, res) => {
     });
 
     console.log('Authentication successful, redirecting to frontend...');
-    // Notice that we use FRONTEND_URL here instead of a hardcoded localhost.
     res.redirect(`${FRONTEND_URL}/auth/success`);
   } catch (error) {
     console.error('Authentication error:', error.response?.data || error.message);
@@ -136,4 +142,4 @@ router.get('/logout', (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
-module.exports = router;
+export default router;

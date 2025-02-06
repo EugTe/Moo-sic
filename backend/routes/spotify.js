@@ -1,9 +1,11 @@
-//- Handles Spotify track-related operations
-const express = require('express');
-const axios = require('axios');
+// spotify.js - Handles Spotify track-related operations
+import express from 'express';
+import axios from 'axios';
+import moment from 'moment';
+
+import Track from '../models/Track.js';
+
 const router = express.Router();
-const Track = require('../models/Track');
-const moment = require('moment');
 
 // Function to extract track ID from Spotify URL
 function extractTrackId(spotifyUrl) {
@@ -72,14 +74,18 @@ router.post('/save-track', async (req, res) => {
 
     if (existingTrack) {
       if (!replace) {
-        return res.status(200).json({ message: 'A track for today already exists.', existingTrack });
+        return res
+          .status(200)
+          .json({ message: 'A track for today already exists.', existingTrack });
       }
 
       // Replace existing track
       Object.assign(existingTrack, trackData);
       await existingTrack.save();
 
-      return res.status(200).json({ message: 'Track replaced successfully.', track: existingTrack });
+      return res
+        .status(200)
+        .json({ message: 'Track replaced successfully.', track: existingTrack });
     }
 
     // Save new track
@@ -127,18 +133,15 @@ router.delete('/delete-track/:userId', async (req, res) => {
 router.get('/collage', async (req, res) => {
   try {
     const collage = await Track.aggregate([
-      // Join the user document from the "users" collection
       {
         $lookup: {
-          from: "users",           // collection name for users
-          localField: "userId",    // track.userId holds the Spotify ID
-          foreignField: "spotifyId", // user.spotifyId
-          as: "userData"
-        }
+          from: 'users', // collection name for users
+          localField: 'userId', // track.userId holds the Spotify ID
+          foreignField: 'spotifyId', // user.spotifyId
+          as: 'userData',
+        },
       },
-      // Unwind the userData array (each track should have exactly one matching user)
-      { $unwind: "$userData" },
-      // Group tracks by date (formatted as YYYY-MM-DD)
+      { $unwind: '$userData' },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
@@ -151,18 +154,16 @@ router.get('/collage', async (req, res) => {
               userId: '$userId',
               displayName: '$displayName',
               date: '$date',
-              // Include the profile image from the joined user data
               profileImage: '$userData.profileImage',
-              // Also include the like counter (number of likes)
-              likeCount: { $size: { "$ifNull": [ "$likes", [] ] } }
+              likeCount: { $size: { $ifNull: ['$likes', []] } },
             },
           },
         },
       },
-      { $sort: { _id: -1 } }, // Sort by latest date
+      { $sort: { _id: -1 } },
     ]);
-    
-    console.log("Returning collage data:", collage);
+
+    console.log('Returning collage data:', collage);
     res.json(collage);
   } catch (error) {
     console.error('Error fetching collage tracks:', error);
@@ -188,7 +189,7 @@ router.get('/user-track', async (req, res) => {
 
     const userTrack = await Track.findOne({
       userId,
-      date: { $gte: startOfDay, $lt: endOfDay }, // Correct time comparison
+      date: { $gte: startOfDay, $lt: endOfDay },
     });
 
     if (!userTrack) {
@@ -203,7 +204,6 @@ router.get('/user-track', async (req, res) => {
 });
 
 // NEW: Like Track Route
-// This route toggles a like on a track. It expects a JSON body with trackId and userId.
 router.post('/like-track', async (req, res) => {
   const { trackId, userId } = req.body;
 
@@ -218,15 +218,15 @@ router.post('/like-track', async (req, res) => {
       return res.status(404).json({ error: 'Track not found' });
     }
 
-    // If the track doesn't already have a likes array, initialize it
+    // Initialize likes if not already set
     if (!track.likes) {
       track.likes = [];
     }
 
     let liked;
-    // Toggle the like: if the user has already liked the track, remove the like; otherwise, add it.
+    // Toggle the like: remove if exists, add otherwise.
     if (track.likes.includes(userId)) {
-      track.likes = track.likes.filter(id => id !== userId);
+      track.likes = track.likes.filter((id) => id !== userId);
       liked = false;
     } else {
       track.likes.push(userId);
@@ -235,11 +235,13 @@ router.post('/like-track', async (req, res) => {
 
     await track.save();
 
-    res.status(200).json({ message: liked ? 'Track liked' : 'Like removed', likeCount: track.likes.length });
+    res
+      .status(200)
+      .json({ message: liked ? 'Track liked' : 'Like removed', likeCount: track.likes.length });
   } catch (error) {
     console.error('Error updating like for track:', error);
     res.status(500).json({ error: 'Failed to update like' });
   }
 });
 
-module.exports = router;
+export default router;

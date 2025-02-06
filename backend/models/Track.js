@@ -1,5 +1,4 @@
-
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const trackSchema = new mongoose.Schema({
   trackName: { type: String, required: true },
@@ -16,4 +15,4 @@ const trackSchema = new mongoose.Schema({
 trackSchema.index({ userId: 1, trackName: 1 }, { unique: true });
 
 
-module.exports = mongoose.model('Track', trackSchema);
+export default mongoose.model('Track', trackSchema);
