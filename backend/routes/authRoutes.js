@@ -113,7 +113,7 @@ router.get('/callback', async (req, res) => {
     });
 
     console.log('Authentication successful, redirecting to frontend...');
-    res.redirect(`${FRONTEND_URL}/auth/success`);
+    res.redirect(`${FRONTEND_URL}`);
   } catch (error) {
     console.error('Authentication error:', error.response?.data || error.message);
     res.redirect(`${FRONTEND_URL}/login?error=authentication_failed`);
