@@ -1,4 +1,4 @@
-// routes/spotify.js - Handles Spotify track-related operations
+//- Handles Spotify track-related operations
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
@@ -182,9 +182,9 @@ router.get('/user-track', async (req, res) => {
     const startOfDay = moment().utc().startOf('day').toDate();
     const endOfDay = moment().utc().endOf('day').toDate();
 
-    console.log('🔎 Fetching track for user:', userId);
-    console.log('🌍 Start of Day (UTC):', startOfDay);
-    console.log('🌍 End of Day (UTC):', endOfDay);
+    console.log('Fetching track for user:', userId);
+    console.log('Start of Day (UTC):', startOfDay);
+    console.log('End of Day (UTC):', endOfDay);
 
     const userTrack = await Track.findOne({
       userId,

@@ -3,6 +3,9 @@ import "./index.css";
 import { useState, useEffect, useCallback } from "react";
 import Header from "./Header";
 
+// Use Vite environment variable or fallback to localhost.
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 export default function App() {
   const [spotifyLink, setSpotifyLink] = useState("");
   const [collageTracks, setCollageTracks] = useState([]);
@@ -11,10 +14,12 @@ export default function App() {
   const [userTrack, setUserTrack] = useState(null);
 
   const refreshUserTrack = useCallback(async () => {
+    console.log(API_URL);
     if (!user) return;
     try {
       const response = await fetch(
-        `http://localhost:5000/spotify/user-track?userId=${user.spotifyId}`
+        `${API_URL}/spotify/user-track?userId=${user.spotifyId}`,
+        { credentials: "include" }
       );
       if (response.ok) {
         const trackData = await response.json();
@@ -29,7 +34,7 @@ export default function App() {
 
   const refreshCollage = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:5000/spotify/collage");
+      const response = await fetch(`${API_URL}/spotify/collage`);
       if (!response.ok) throw new Error("Failed to fetch collage");
       const data = await response.json();
       setCollageTracks(data);
@@ -41,7 +46,7 @@ export default function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:5000/auth/me", {
+        const response = await fetch(`${API_URL}/auth/me`, {
           credentials: "include",
         });
         if (response.ok) {
@@ -69,12 +74,11 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5000/auth/logout", {
+      await fetch(`${API_URL}/auth/logout`, {
         method: "GET",
         credentials: "include",
       });
       setUser(null);
-      // Redirect to home page after logout
       window.location.href = "/";
     } catch (error) {
       console.error("Error logging out:", error);
@@ -91,7 +95,7 @@ export default function App() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/spotify/save-track", {
+      const response = await fetch(`${API_URL}/spotify/save-track`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -127,7 +131,7 @@ export default function App() {
       );
       if (!confirmDelete) return;
       const response = await fetch(
-        `http://localhost:5000/spotify/delete-track/${user.spotifyId}`,
+        `${API_URL}/spotify/delete-track/${user.spotifyId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -153,7 +157,7 @@ export default function App() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/spotify/like-track", {
+      const response = await fetch(`${API_URL}/spotify/like-track`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
