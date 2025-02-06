@@ -11,7 +11,7 @@ router.use(cookieParser()); // Ensure cookies are parsed
 const SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize';
 const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 
-// 🚀 Route to redirect users to Spotify login
+// Route to redirect users to Spotify login
 router.get('/login', (req, res) => {
   const scope = 'user-read-email user-read-private';
 
@@ -123,7 +123,7 @@ router.get('/me', (req, res) => {
   }
 });
 
-// 🚀 Logout route
+// Logout route
 router.get('/logout', (req, res) => {
   res.clearCookie('auth_token', {
     httpOnly: true,

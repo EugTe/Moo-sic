@@ -9,6 +9,8 @@ const trackSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   userId: { type: String, required: true },
   displayName: { type: String, required: true },
+
+  likes: { type: [String], default: [] },
 });
 
 trackSchema.index({ userId: 1, trackName: 1 }, { unique: true });
